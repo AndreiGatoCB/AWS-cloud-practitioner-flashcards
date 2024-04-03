@@ -14,7 +14,8 @@ el más confiable es inglés.
 ![Cara frontal flashcard](images/preguntas.PNG)
 
 Acá se encuentra el texto de la pregunta y las opciones de respuesta. Esta carta se muestra por aproximadamente 90 
-segundos.
+segundos, el botón de la flecha lo puedes usar para girar la carta y ver las respuestas sin necesidad de esperar los 90
+segundos por defecto.
 
 ### Luego se encuentra la parte trasera de la flashcard.
 ![Cara trasera flashcard](images/respuestas.PNG)

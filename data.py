@@ -1,15 +1,21 @@
 import pandas as pd
 
-preguntas =[
-    {'pregunta': 'A company is planning to run a global marketing application in the AWS Cloud. The application will feature videos that can be viewed by users. The company must ensure that all users can view these videos with low latency. Which AWS service should the company use to meet this requirement?',
+preguntas = [
+    {'pregunta': 'A company is planning to run a global marketing application in the AWS Cloud. The application will'
+                 ' feature videos that can be viewed by users. The company must ensure that all users can view these'
+                 ' videos with low latency. Which AWS service should the company use to meet this requirement?',
      'opciones': '''A. AWS Auto Scaling
 B. Amazon Kinesis Video Streams
 C. Elastic Load Balancing
 D. Amazon CloudFront''',
      'respuesta': 'D. Amazon CloudFront',
-     'argumento': 'Amazon CloudFront: The best option for the company to ensure that users can view videos with low latency would be to use Amazon CloudFront. CloudFront is a content delivery network (CDN) that speeds up the delivery of static and dynamic web content, such as HTML, CSS, JavaScript, and images, as well as videos.',
+     'argumento': 'Amazon CloudFront: The best option for the company to ensure that users can view videos with low '
+                  'latency would be to use Amazon CloudFront. CloudFront is a content delivery network (CDN) that '
+                  'speeds up the delivery of static and dynamic web content, such as HTML, CSS, JavaScript, and images,'
+                  ' as well as videos.',
      'referencia': 'https://aws.amazon.com/cloudfront/'},
-    {'pregunta': 'Which pillar of the AWS Well-Architected Framework refers to the ability of a system to recover from infrastructure or service disruptions and dynamically acquire computing resources to meet demand?',
+    {'pregunta': 'Which pillar of the AWS Well-Architected Framework refers to the ability of a system to recover from '
+                 'infrastructure or service disruptions and dynamically acquire computing resources to meet demand?',
      'opciones': '''A. Security.
 B. Reliability.
 C. Performance efficiency. 

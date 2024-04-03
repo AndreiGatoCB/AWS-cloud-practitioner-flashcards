@@ -104,7 +104,7 @@ def iniciar_interfaz(df):
         canvas.itemconfig(card_argument, text='')
         canvas.itemconfig(card_reference, text='')
         canvas.itemconfig(card_background, image=flashcard_img_front)
-        tiempo_de_giro = window.after(83076, func=flip_card)
+        # tiempo_de_giro = window.after(83076, func=flip_card)
         if eleccion == 'conocidas':
             correctas += 1
 
@@ -121,7 +121,7 @@ def iniciar_interfaz(df):
         canvas.itemconfig(card_reference, text=carta_actual["referencia"], fill='white')
         pyperclip.copy(carta_actual["referencia"])
         canvas.itemconfig(card_background, image=flashcard_img_back)
-        df.remove(carta_actual)
+        # df.remove(carta_actual)
 
     window = Tk()
     window.title("AWS Flash cards")

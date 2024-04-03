@@ -1,7 +1,6 @@
 from tkinter import *
 import random
 import pandas as pd
-from data import preguntas
 import pyperclip
 import tkinter as tk
 from tkinter import ttk
@@ -74,7 +73,7 @@ def iniciar_programa():
     idioma_seleccionado = idioma_var.get()
     cuestionario = random.sample(preguntas_idiomas.get(idioma_seleccionado), 65)
     ventana_seleccion.destroy()
-    print(idioma_seleccionado)
+    # print(idioma_seleccionado)
     if idioma_seleccionado is not None:
         preguntas_idioma = preguntas_idiomas.get(idioma_seleccionado)
         if preguntas_idioma is not None:
@@ -87,6 +86,7 @@ def iniciar_interfaz(df):
     def next_card(eleccion):
         global carta_actual, correctas, botones_habilitados
 
+        boton_turn.grid(column=3, row=4)
         boton_conocido.grid_forget()
         boton_desconocido.grid_forget()
 
@@ -113,6 +113,7 @@ def iniciar_interfaz(df):
     def flip_card():
         boton_conocido.grid(column=1, row=4)
         boton_desconocido.grid(column=2, row=4)
+        boton_turn.grid_forget()
         canvas.itemconfig(card_question, text=carta_actual['pregunta'], fill='white')
         canvas.itemconfig(card_options, text='')
         canvas.itemconfig(card_answer, text=carta_actual["respuesta"], fill='white')
@@ -146,6 +147,8 @@ def iniciar_interfaz(df):
     right_img = PhotoImage(file="images/right.png")
     boton_conocido = Button(image=right_img, bg=BACKGROUND_COLOR2, highlightthickness=0, command=lambda: next_card('conocidas'))
 
+    turn_card_img = PhotoImage(file='images/turn_arrow_.png')
+    boton_turn = Button(image=turn_card_img, bg=BACKGROUND_COLOR2, highlightthickness=0, command=lambda: flip_card() )
     next_card('desconocidas')
 
     window.mainloop()

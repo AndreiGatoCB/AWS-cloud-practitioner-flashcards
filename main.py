@@ -38,7 +38,7 @@ botones_habilitados = True
 idioma_seleccionado = None
 window = None
 rta_user = []
-cant_preguntas = 65
+cant_preguntas = 5
 
 def mostrar_resumen():
     global correctas

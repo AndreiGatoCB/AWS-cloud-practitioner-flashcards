@@ -37,7 +37,8 @@ correctas = 0
 botones_habilitados = True
 idioma_seleccionado = None
 window = None
-
+rta_user = []
+cant_preguntas = 65
 
 def mostrar_resumen():
     global correctas
@@ -47,7 +48,7 @@ def mostrar_resumen():
     ventana_resumen.title("Fin del juego")
     ventana_resumen.config(pady=20, padx=20, bg=BACKGROUND_COLOR2)
 
-    etiqueta_correctas = Label(ventana_resumen, text=f"Respuestas Correctas: {correctas}/65",
+    etiqueta_correctas = Label(ventana_resumen, text=f"Respuestas Correctas: {correctas}/{cant_preguntas}",
                                font=("Ariel", 16, "bold"), bg=BACKGROUND_COLOR2)
     etiqueta_correctas.pack()
 
@@ -71,7 +72,7 @@ def mostrar_resumen():
 def iniciar_programa():
     global idioma_seleccionado
     idioma_seleccionado = idioma_var.get()
-    cuestionario = random.sample(preguntas_idiomas.get(idioma_seleccionado), 65)
+    cuestionario = random.sample(preguntas_idiomas.get(idioma_seleccionado), k=cant_preguntas)
     ventana_seleccion.destroy()
     # print(idioma_seleccionado)
     if idioma_seleccionado is not None:
@@ -82,45 +83,80 @@ def iniciar_programa():
 
 def iniciar_interfaz(df):
     global window
-    # print(pd.DataFrame(df).to_string(index=False))
 
     def next_card(eleccion):
-        global carta_actual, correctas, botones_habilitados
+        global carta_actual, correctas, botones_habilitados#, rta_user
 
-        boton_turn.grid(column=3, row=4)
+        carta_actual = random.choice(df)
+        opciones = carta_actual['opciones'].split("\r\n")
+        respuestas = carta_actual['respuesta'].split("\r\n")
         boton_conocido.grid_forget()
         boton_desconocido.grid_forget()
+        boton_turn.grid(column=2, row=5)
+
+        a_opt.grid(column=0, row=4)
+        b_opt.grid(column=1, row=4)
+        c_opt.grid(column=2, row=4)
+        d_opt.grid(column=3, row=4)
+        if len(opciones) == 5:
+            e_opt.grid(column=4, row=4)
 
         tiempo_de_giro = window.after(83076, func=flip_card)
         window.after_cancel(tiempo_de_giro)
 
-        if not df:
-            mostrar_resumen()
-            return
-
-        carta_actual = random.choice(df)
-        canvas.itemconfig(card_question, text=f"{66 - len(df)}\n{carta_actual['pregunta']}", fill='black')
+        canvas.itemconfig(card_question, text=carta_actual['pregunta'], fill='black')
         canvas.itemconfig(card_options, text=carta_actual['opciones'])
         canvas.itemconfig(card_answer, text='')
         canvas.itemconfig(card_argument, text='')
         canvas.itemconfig(card_reference, text='')
         canvas.itemconfig(card_background, image=flashcard_img_front)
-        # tiempo_de_giro = window.after(83076, func=flip_card)
-        if eleccion == 'conocidas':
-            correctas += 1
 
     def flip_card():
+        global rta_user, correctas
+        opciones = carta_actual['opciones'].split("\r\n")
+        respuestas = carta_actual['respuesta'].split("\r\n")
         boton_conocido.grid(column=1, row=4)
-        boton_desconocido.grid(column=2, row=4)
+        boton_desconocido.grid(column=3, row=4)
         boton_turn.grid_forget()
-        canvas.itemconfig(card_question, text=f"{66 - len(df)}\n{carta_actual['pregunta']}", fill='white')
+        a_opt.grid_forget()
+        b_opt.grid_forget()
+        c_opt.grid_forget()
+        d_opt.grid_forget()
+        if e_opt:
+            e_opt.grid_forget()
+
+        canvas.itemconfig(card_question, text=carta_actual['pregunta'], fill='white')
         canvas.itemconfig(card_options, text='')
         canvas.itemconfig(card_answer, text=carta_actual["respuesta"], fill='white')
         canvas.itemconfig(card_argument, text=carta_actual["argumento"], fill='white')
         canvas.itemconfig(card_reference, text=carta_actual["referencia"], fill='white')
         pyperclip.copy(carta_actual["referencia"])
         canvas.itemconfig(card_background, image=flashcard_img_back)
+
+        if len(rta_user) > 0:
+            if len(opciones) == 4:
+                if rta_user[0] in respuestas:
+                    correctas += 1
+            elif len(opciones) == 5:
+                if rta_user[0] in respuestas:
+                    if rta_user[1] in respuestas:
+                        correctas += 1
+        for widget in window.winfo_children():
+            if isinstance(widget, tk.Radiobutton):
+                widget.destroy()
+        rta_user = []
         df.remove(carta_actual)
+        if not df:
+            mostrar_resumen()
+            return
+
+    def user_opt(respuesta):
+        global rta_user
+        if respuesta in rta_user:
+            rta_user.remove(respuesta)
+        else:
+            rta_user.append(respuesta)
+        return rta_user
 
     window = Tk()
     window.title("AWS Flash cards")
@@ -138,7 +174,7 @@ def iniciar_interfaz(df):
     card_argument = canvas.create_text(360, 300, text='', font=("Ariel", 8, "normal"), justify='center', width=600)
     card_reference = canvas.create_text(360, 380, text='', font=("Ariel", 8, "normal"), justify='center', width=500)
 
-    canvas.grid(column=0, row=0, columnspan=4, rowspan=4)
+    canvas.grid(column=0, row=0, columnspan=5, rowspan=4)
 
     wrong_img = PhotoImage(file="images/wrong.png")
     boton_desconocido = Button(image=wrong_img, bg=BACKGROUND_COLOR2, highlightthickness=0, command=lambda: next_card('desconocidas'))
@@ -147,7 +183,13 @@ def iniciar_interfaz(df):
     boton_conocido = Button(image=right_img, bg=BACKGROUND_COLOR2, highlightthickness=0, command=lambda: next_card('conocidas'))
 
     turn_card_img = PhotoImage(file='images/turn_arrow_.png')
-    boton_turn = Button(image=turn_card_img, bg=BACKGROUND_COLOR2, highlightthickness=0, command=lambda: flip_card() )
+    boton_turn = Button(image=turn_card_img, bg=BACKGROUND_COLOR2, highlightthickness=0, command=lambda: flip_card())
+
+    a_opt = Button(text='A', bg=BACKGROUND_COLOR2, highlightthickness=0, width=5, height=2, command=lambda: user_opt(carta_actual['opciones'].split("\r\n")[0]))
+    b_opt = Button(text='B', bg=BACKGROUND_COLOR2, highlightthickness=0, width=5, height=2, command=lambda: user_opt(carta_actual['opciones'].split("\r\n")[1]))
+    c_opt = Button(text='C', bg=BACKGROUND_COLOR2, highlightthickness=0, width=5, height=2, command=lambda: user_opt(carta_actual['opciones'].split("\r\n")[2]))
+    d_opt = Button(text='D', bg=BACKGROUND_COLOR2, highlightthickness=0, width=5, height=2, command=lambda: user_opt(carta_actual['opciones'].split("\r\n")[3]))
+    e_opt = Button(text='E', bg=BACKGROUND_COLOR2, highlightthickness=0, width=5, height=2, command=lambda: user_opt(carta_actual['opciones'].split("\r\n")[4]))
     next_card('desconocidas')
 
     window.mainloop()

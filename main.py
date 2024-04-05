@@ -82,6 +82,7 @@ def iniciar_programa():
 
 def iniciar_interfaz(df):
     global window
+    # print(pd.DataFrame(df).to_string(index=False))
 
     def next_card(eleccion):
         global carta_actual, correctas, botones_habilitados
@@ -98,7 +99,7 @@ def iniciar_interfaz(df):
             return
 
         carta_actual = random.choice(df)
-        canvas.itemconfig(card_question, text=carta_actual['pregunta'], fill='black')
+        canvas.itemconfig(card_question, text=f"{66 - len(df)}\n{carta_actual['pregunta']}", fill='black')
         canvas.itemconfig(card_options, text=carta_actual['opciones'])
         canvas.itemconfig(card_answer, text='')
         canvas.itemconfig(card_argument, text='')
@@ -108,20 +109,18 @@ def iniciar_interfaz(df):
         if eleccion == 'conocidas':
             correctas += 1
 
-        # tiempo_de_giro = window.after(3000, func=flip_card)
-
     def flip_card():
         boton_conocido.grid(column=1, row=4)
         boton_desconocido.grid(column=2, row=4)
         boton_turn.grid_forget()
-        canvas.itemconfig(card_question, text=carta_actual['pregunta'], fill='white')
+        canvas.itemconfig(card_question, text=f"{66 - len(df)}\n{carta_actual['pregunta']}", fill='white')
         canvas.itemconfig(card_options, text='')
         canvas.itemconfig(card_answer, text=carta_actual["respuesta"], fill='white')
         canvas.itemconfig(card_argument, text=carta_actual["argumento"], fill='white')
         canvas.itemconfig(card_reference, text=carta_actual["referencia"], fill='white')
         pyperclip.copy(carta_actual["referencia"])
         canvas.itemconfig(card_background, image=flashcard_img_back)
-        # df.remove(carta_actual)
+        df.remove(carta_actual)
 
     window = Tk()
     window.title("AWS Flash cards")
